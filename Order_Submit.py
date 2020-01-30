@@ -2,6 +2,7 @@ from DB_Connection import *
 from colorama import Fore
 from datetime import datetime
 
+
 def submit():
     cur, conn = connect()
     menu = "Select * from " + '"' + 'Menu' + '"'
@@ -39,9 +40,9 @@ def submit():
     print("total price of order is :")
     print(total_price)
     if (isuser):
-        submit_order_in_User_Order(cur, conn, order , total_price , order_prices)
+        submit_order_in_User_Order(cur, conn, order, total_price, order_prices)
     elif (not isuser):
-        submit_order_in_NameLessOrder(cur, conn, order , total_price , order_prices)
+        submit_order_in_NameLessOrder(cur, conn, order, total_price, order_prices)
 
 
 def is_user():
@@ -67,28 +68,90 @@ def get_order():
     return order
 
 
+def submit_order_in_User_Order(cur, conn, order, total_price, order_prices):
+    insert = 'INSERT into ' + '"' + 'UserOrder' + '"' + 'Values(%s,%s,%s,%s,%s,%s)'
+    print("please input an id for this order : ")
+    order_id = input(' > ')
+    print("please Enter User_id : ")
+    user_id = str(input(' > '))
+    address = 'Select ' + '"' + 'Addresses' + '"' + 'from ' + '"' + 'Address' + '"' + ' where ' + '"' + 'User_id' + '"' + ' = ' + user_id +';'
+    try:
+        print("Addresses save for user: ")
+        cur.execute(address)
+        addresses = cur.fetchone()[0]
+        for row in addresses:
+            print(Fore.YELLOW + row)
+    except (Exception,) as error:
+        print(Fore.RED + "ERROR : ")
+        print(error)
+    print(Fore.WHITE + "please Enter An Address(if you serve here say no)")
+    Address = input(' > ')
+    if (Address == 'no'):
+        transporter_needed = False
+        Address = 'serve here'
+    else:
+        transporter_needed = True
+    dt = datetime.now()
+    try:
+        if (transporter_needed == False):
+            cur.execute(insert, (order_id, order, Address, order_prices, total_price, user_id,))
+            conn.commit()
+            print(Fore.BLUE + "Thank you for your Order")
+        else:
+            transporter = 'SELECT * from ' + '"' + 'Transporter' + '"'
+            cur.execute(transporter)
+            print("Transporter Avaible Are :")
+            transporter_record = cur.fetchall()
+            print(transporter_record)
+            print(Fore.WHITE + "please Enter Transporter id :")
+            transporter_id = input(' > ')
+            cur.execute(insert, (order_id, order, Address, order_prices, total_price, user_id,))
+            conn.commit()
+            print(Fore.BLUE + "Thank you for your Order")
+    except (Exception,) as error:
+        print(Fore.RED + "ERROR : ")
+        print(error)
+    finally:
+        print(Fore.WHITE + "Connection closing !")
+        conn.close()
 
-def submit_order_in_User_Order(cur, conn, order , total_price , order_prices):
 
-
-def submit_order_in_NameLessOrder(cur, conn, order , total_price , order_prices):
-    transporter_needed  = False
+def submit_order_in_NameLessOrder(cur, conn, order, total_price, order_prices):
+    transporter_needed = False
     insert = 'INSERT into ' + '"' + 'NameLessOrder' + '"' + 'Values(%s,%s,%s,%s,%s,%s)'
     print("please input an id for this order : ")
     order_id = input(' > ')
     print("please Enter An Address(if you serve here say no)")
     Address = input(' > ')
-    if(Address == 'no'):
+    if (Address == 'no'):
         transporter_needed = False
         Address = 'serve here'
     else:
         transporter_needed = True
-        dt = datetime.now()
+    dt = datetime.now()
     try:
-        cur.execute(insert,(total_price,order_id,order_prices,order,Address,dt,))
+        if (transporter_needed == False):
+            cur.execute(insert, (total_price, order_id, order_prices, order, Address, dt,))
+            conn.commit()
+            print(Fore.BLUE + "Thank you for your Order")
+        else:
+            transporter = 'SELECT * from ' + '"' + 'Transporter' + '"'
+            cur.execute(transporter)
+            print("Transporter Avaible Are :")
+            transporter_record = cur.fetchall()
+            print(transporter_record)
+            print(Fore.WHITE + "please Enter Transporter id :")
+            transporter_id = input(' > ')
+            cur.execute(insert, (total_price, order_id, order_prices, order, Address, dt,))
+            conn.commit()
+            print(Fore.BLUE + "Thank you for your Order")
     except (Exception,) as error:
         print(Fore.RED + "ERROR : ")
         print(error)
+    finally:
+        print(Fore.WHITE + "Connection closing !")
+        conn.close()
+
 
 def get_price_of_order(cur, conn, order):
     get_price = 'SELECT' + '"' + 'Item_Price' + '"' + 'from ' + '"' + 'Menu' + '" ' + 'WHERE' + '"' + 'Item_Name' + '" ' + '= %s'
