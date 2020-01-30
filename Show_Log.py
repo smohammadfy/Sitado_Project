@@ -1,6 +1,7 @@
 from DB_Connection import *
 from colorama import Fore
 
+
 def log():
     cur, conn = connect()
     sql = "Select * from "
@@ -21,3 +22,5 @@ def log():
         except (Exception,) as error:
             print(Fore.RED + "ERROR : ")
             print(error)
+        finally:
+            conn.close()

@@ -41,6 +41,8 @@ def update(sql, cur, conn):
         except (Exception,) as error:
             print(Fore.RED + "ERROR : ")
             print(error)
+        finally:
+            conn.close()
 
 
 def delete(sql, cur, conn):
@@ -62,7 +64,8 @@ def delete(sql, cur, conn):
         except (Exception,) as error:
             print(Fore.RED + "ERROR : ")
             print(error)
-
+        finally:
+            conn.close()
 
 def insert(sql, cur, conn):
     user = '("Name","Last_Name","User_id","Phone_Number","Age")'
@@ -94,6 +97,8 @@ def insert(sql, cur, conn):
             except (Exception,) as error:
                 print(Fore.RED + "ERROR : ")
                 print(error)
+            finally:
+                conn.close()
         elif (table == 'Menu'):
             sql = sql + '"' + table + '"' + menu + 'VALUES(%s,%s,%s)'
             print('Enter Item id :')
@@ -109,6 +114,8 @@ def insert(sql, cur, conn):
             except (Exception,) as error:
                 print(Fore.RED + "ERROR : ")
                 print(error)
+            finally:
+                conn.close()
         elif (table == 'Transporter'):
             sql = sql + '"' + table + '"' + transporter + 'VALUES(%s,%s,%s,%s)'
             print('Enter Name :')
@@ -126,6 +133,8 @@ def insert(sql, cur, conn):
             except (Exception,) as error:
                 print(Fore.RED + "ERROR : ")
                 print(error)
+            finally:
+                conn.close()
         elif (table == 'Shops'):
             sql = sql + '"' + table + '"' + shop + 'VALUES(%s,%s,%s,%s)'
             print('Enter Shop id :')
@@ -145,3 +154,5 @@ def insert(sql, cur, conn):
             except (Exception,) as error:
                 print(Fore.RED + "ERROR : ")
                 print(error)
+            finally:
+                conn.close()
